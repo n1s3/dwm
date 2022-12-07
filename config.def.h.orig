@@ -17,14 +17,9 @@ static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#DDE6E9"; //"#eeeeee";
 static const char col_cyan[]        = "#516739";
 static const char *colors[][3]      = {
-	/*                      fg         bg         border   */
-	[SchemeNorm]        = { col_gray4, col_gray1, col_gray2 },
-	[SchemeSel]         = { col_gray4, col_gray1, col_cyan },
-    [SchemeStatus]      = { col_gray4, col_gray1, "#000000" }, // Statusbar right {text,background,not used but cannot be empty)
-    [SchemeTagsSel]     = { col_gray4, col_cyan,  "#000000" }, // Tagbar left selected
-    [SchemeTagsNorm]    = { col_gray4, col_gray1, "#000000" }, // Tagbar left unselected
-    [SchemeInfoSel]     = { col_gray4, col_gray1, "#000000" }, // infobar middle  selected
-    [SchemeInfoNorm]    = { col_gray4, col_gray1, "#000000" }, // infobar middle  unselected
+	/*               fg         bg         border   */
+	[SchemeNorm] = { col_gray4, col_gray1, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_gray1,  col_cyan  },
 };
 
 /* tagging */
@@ -43,7 +38,6 @@ static const Rule rules[] = {
 	{ "Alacritty",      NULL,     NULL,           0,        0,          0,          1,           0,        -1 },
 	{ NULL,             NULL,     "FloatTerm",    0,        1,          1,          1,           0,        -1 },
 	{ NULL,             NULL,     "Event Tester", 0,        0,          0,          0,           1,        -1 }, /* xev */
-	{ "InputOutput",    NULL,     NULL,           0,        1,          1,          0,           0,        -1 },
 };
 
 /* layout(s) */
