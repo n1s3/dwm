@@ -8,6 +8,9 @@ static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const int usealtbar          = 0;
+static const char *altbarclass      = "Lemonbar";
+static const char *altbarcmd        = "$HOME/.config/lemonbar/start.sh"; //alt bar launch cmd
 static const char *fonts[]          = { "terminus:size=12", "TerminessTTF Nerd Font Mono:size=16", 
                                         "Material Design Icons:Regular:pixelsize=18:antialias=true" };
 static const char dmenufont[]       = "terminus:size=12";
@@ -85,8 +88,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+//	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } }, //There two keybinds switch between veritical / horizontal stack
+//	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } }, //
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                    XK_backslash, zoom,           {0} },
