@@ -2,51 +2,44 @@
 
 /* appearance */
 static const unsigned int borderpx  = 3;        /* border pixel of windows */
-static const int startwithgaps      = 1;
-static const unsigned int gappx     = 10;
+static const unsigned int gappx     = 24;        /* gaps between windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const int showbar            = 1;        /* 0 means no bar */
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
+static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const int usealtbar          = 0;
-static const char *altbarclass      = "Lemonbar";
-static const char *altbarcmd        = "$HOME/.config/lemonbar/start.sh"; //alt bar launch cmd
-static const char *fonts[]          = { "terminus:size=12", "TerminessTTF Nerd Font Mono:size=16", 
-                                        "Material Design Icons:Regular:pixelsize=18:antialias=true" };
-static const char dmenufont[]       = "terminus:size=12";
-static const char col_gray1[]       = "#222222";
-static const char col_gray2[]       = "#444444";
+static const int vertpad	    = 12;	/* vertical padding of bar */
+static const int sidepad	    = 12;	/* horizontal padding of bar */
+static const char *fonts[]          = { "spleen32x64:size=14" };
+static const char dmenufont[]       = "spleen32x64:size=14";
+static const char col_gray1[]       = "#24293c";
+static const char col_gray2[]       = "#24293c";
 static const char col_gray3[]       = "#bbbbbb";
-static const char col_gray4[]       = "#DDE6E9"; //"#eeeeee";
-static const char col_cyan[]        = "#516739";
+static const char col_gray4[]       = "#eeeeee";
+static const char col_cyan[]        = "#d60752";
+static const char col_win[]	    = "#31384B";
 static const char *colors[][3]      = {
-	/*                      fg         bg         border   */
-	[SchemeNorm]        = { col_gray4, col_gray1, col_gray2 },
-	[SchemeSel]         = { col_gray4, col_gray1, col_cyan },
-    [SchemeStatus]      = { col_gray4, col_gray1, "#000000" }, // Statusbar right {text,background,not used but cannot be empty)
-    [SchemeTagsSel]     = { col_gray4, col_cyan,  "#000000" }, // Tagbar left selected
-    [SchemeTagsNorm]    = { col_gray4, col_gray1, "#000000" }, // Tagbar left unselected
-    [SchemeInfoSel]     = { col_gray4, col_gray1, "#000000" }, // infobar middle  selected
-    [SchemeInfoNorm]    = { col_gray4, col_gray1, "#000000" }, // infobar middle  unselected
+	/*               fg         bg         border   */
+	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
+	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeWin]  = { col_gray4, col_win,  col_cyan  },
 };
 
 /* tagging */
-static const char *tags[] = { "", "", "", "", "" };
+static const char *tags[] = { "1", "2", "3", "4", "5" };
 
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
 	 *	WM_NAME(STRING) = title
 	 */
-	/* class            instance  title           tags mask iscentered  isfloating  isterminal  noswallow  monitor */
-	{ "Gimp",           NULL,     NULL,           0,        0,          1,          0,           0,        -1 },
-	{ "Pavucontrol",    NULL,     NULL,           0,        1,          1,          0,           0,        -1 },
-	{ "mpv",            NULL,     NULL,           0,        1,          1,          0,           0,        -1 },
-	{ "zoom",           NULL,     NULL,           0,        1,          1,          0,           0,        -1 },
-	{ "Alacritty",      NULL,     NULL,           0,        0,          0,          1,           0,        -1 },
-	{ NULL,             NULL,     "FloatTerm",    0,        1,          1,          1,           0,        -1 },
-	{ NULL,             NULL,     "Event Tester", 0,        0,          0,          0,           1,        -1 }, /* xev */
-	{ "InputOutput",    NULL,     NULL,           0,        1,          1,          0,           0,        -1 },
+	/* class     		instance  title           tags mask  isfloating  isterminal  noswallow  monitor */
+	{ "Gimp",    		NULL,     NULL,           0,         0,          0,           0,        -1 },
+	{ "Alacritty",  	NULL,     NULL,           0,         0,          1,           0,        -1 },
+	{ "mpv",		NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ "zoom",           	NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ "Gpick",		NULL,     NULL,           0,         0,          0,           0,         1 },
+	{ "Pavucontrol",	NULL,     NULL,           0,         1,          0,           0,        -1 },
+	{ NULL,      		NULL,     "Event Tester", 0,         0,          0,           1,        -1 }, /* xev */
 };
 
 /* layout(s) */
@@ -59,7 +52,7 @@ static const Layout layouts[] = {
 	/* symbol     arrange function */
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
-	{ "[M]^",      monocle },
+	{ "[M]",      monocle },
 };
 
 /* key definitions */
@@ -74,27 +67,24 @@ static const Layout layouts[] = {
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
 
 /* commands */
-static const char *dmenucmd[] = { "dmenu_run", "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
+static char dmenumon[2] = "0"; /* component of dmenucmd, manipulated in spawn() */
+static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont, "-nb", col_gray1, "-nf", col_gray3, "-sb", col_cyan, "-sf", col_gray4, NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
-static const char *fltterm[]  = { "alacritty", "-t", "FloatTerm", NULL };
-static const char *webcmd[]  = { "qutebrowser", NULL };
+static const char *webcmd[]  = { "firefox", NULL };
 
-static Key keys[] = {
+static const Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_p,      spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return, spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_Return, spawn,          {.v = fltterm } },
-	{ MODKEY,             		    XK_o,	   spawn,          {.v = webcmd} },
+	{ MODKEY,                       XK_o,      spawn,          {.v = webcmd } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-//	{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } }, //There two keybinds switch between veritical / horizontal stack
-//	{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } }, //
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                    XK_backslash, zoom,           {0} },
 	{ MODKEY,                       XK_Tab,    view,           {0} },
 	{ MODKEY|ShiftMask,             XK_c,      killclient,     {0} },
+	{ MODKEY,                    XK_backslash, zoom,           {0} },
 	{ MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]} },
 	{ MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]} },
@@ -106,25 +96,20 @@ static Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
-	{ MODKEY,                       XK_minus,  setgaps,        {.i = -5 } },
-	{ MODKEY,                       XK_equal,  setgaps,        {.i = +5 } },
-	{ MODKEY|ShiftMask,             XK_minus,  setgaps,        {.i = GAP_RESET } },
-	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = GAP_TOGGLE} },
+	{ MODKEY,                       XK_minus,  setgaps,        {.i = -1 } },
+	{ MODKEY,                       XK_equal,  setgaps,        {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_equal,  setgaps,        {.i = 0  } },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
 	TAGKEYS(                        XK_4,                      3)
 	TAGKEYS(                        XK_5,                      4)
-	TAGKEYS(                        XK_6,                      5)
-	TAGKEYS(                        XK_7,                      6)
-	TAGKEYS(                        XK_8,                      7)
-	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
 };
 
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
-static Button buttons[] = {
+static const Button buttons[] = {
 	/* click                event mask      button          function        argument */
 	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
 	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },

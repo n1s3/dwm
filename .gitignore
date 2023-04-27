@@ -1,0 +1,11 @@
+LICENSE
+config.def.h.orig
+config.def.h.rej
+config.mk.orig
+drw.o
+dwm
+dwm.c.orig
+dwm.c.rej
+dwm.o
+old.config.def.h
+util.o
